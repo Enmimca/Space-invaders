@@ -24,7 +24,6 @@ position_vaisseau = (300,525)
 position_alien = (300,10)
 projectiles = []
 rectangle_alien = pygame.Rect(position_alien[0],position_alien[1], 33, 27)
-position_bombe = (position_alien[0] + 16, position_alien[1])
 
 score = 0
 nombre_projectiles = 100
@@ -48,7 +47,7 @@ def dessiner():
     # Ceci permet de 'nettoyer' notre fenêtre avant de la dessiner
     fenetre.fill( (0,0,0) )
     fenetre.blit(image_vaisseau, position_vaisseau) # On dessine l'image du vaisseau à sa position
-    fenetre.blit(image_alien, position_alien)  # On dessine l'image de l'alien à sa position
+    fenetre.blit(image_alien, (position_alien[0] + 16, position_alien[1]))  # On dessine l'image de l'alien à sa position
     for projectile in projectiles:
         if projectile != (-1, -1):
             pygame.draw.circle(fenetre, (255,0,0), projectile, 5) # On dessine le projectile (un simple petit cercle)
@@ -69,8 +68,10 @@ def dessiner():
     arial40 = pygame.font.SysFont("arial", 40)
     if position_alien[1] + 27 >= 600:
         position_alien = (900, 900)
-        surface_zone_defaite = arial40.render("DOMMAGE,TU AS PERDU...", True, pygame.Color(211, 200, 51))
+        surface_zone_defaite = arial40.render("DOMMAGE, TU AS PERDU...", True, pygame.Color(211, 200, 51))
         fenetre.blit(surface_zone_defaite, (50, 275))
+    for bombe in bombes:
+        bombe = fenetre.blit(image_bombe, (position_alien[0] + 16,position_alien[1]))
     pygame.display.flip() # Rafraichissement complet de la fenêtre avec les dernières opérations de dessin
 
 
@@ -119,15 +120,13 @@ while continuer==1:
     if position_alien != (-1, -1):
 #L'alien se décale de droite à gauche ou de gauche à droite
         if se_dirige_vers_la_droite:
-            position_alien = (position_alien[0] + 2,position_alien[1])
+            position_alien = (position_alien[0] + 2,position_alien[1]) 
             if random.randint(0, 15) == 1:
-                fenetre.blit(image_bombe, position_bombe)
-                position_bombe = bombes.append((position_alien[0] + 16, position_alien[1]))
+               bombes.append(bombe[0], bombe[1] + 5)
         if not se_dirige_vers_la_droite:
             position_alien = (position_alien[0] -2, position_alien[1])
             if random.randint(0, 15) == 1:
-                fenetre.blit(image_bombe, position_bombe)
-                position_bombe = bombes.append((position_alien[0] + 16, position_alien[1]))
+               bombes.append(bombe[0], bombe[1] + 5)
         # Quand l'alien arrive au bord de l'écran il descend de 20 vers le vaisseau
         if position_alien[0] + 33 > 600:
             position_alien = (position_alien[0], position_alien[1] +20)
@@ -149,7 +148,7 @@ while continuer==1:
                 explosion = pygame.mixer.Sound("sf_explosion_01.wav")
                 explosion.play()
                 if vies_alien > 0:
-                    vies_alien -= 1
+                    vies_alien -= 1 
                 if vies_alien == 0:
                     position_alien = (-100, -100) #quand il n'a plus de vies il disparaît (il sort de la fenêtre)
             else:
@@ -166,18 +165,7 @@ while continuer==1:
             liste_etoiles_2.append((etoile[0], etoile[1] + 3)) #si l'étoile est encore dans l'écran, on la fait descendre de 3 (-> impression de mouvement de la part du vaisseau et de l'alien)
     liste_etoiles = liste_etoiles_2
 
-    bombes_2 = []
-    for bombe in bombes:
-        rectangle_bombe = pygame.Rect(position_bombe[0], position_bombe[1], 10, 10)
-        if bombe[1] > 600:
-            del bombe
-        else:
-            bombes_2.append(bombe[0], bombe[1] + 5)
-    bombes = bombes_2
-
 
         
-
-
 # A la fin, lorsque l'on sortira de la boucle, on demandera à Pygame de quitter proprement
 pygame.quit()
