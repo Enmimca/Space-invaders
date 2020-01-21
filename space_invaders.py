@@ -121,9 +121,9 @@ while continuer==1:
     # ici on déclare 50 tours par secondes soit une animation à 50 images par secondes
     clock.tick(50)
 
-    dessiner()
     gerer_clavier_souris()
     if not jeu_termine:
+        dessiner()
         if position_alien != (-1, -1):
             if random.randint(0, 100) == 1: #on tire un nombre au hasard et s'il est égal à 1 il envoie une bombe
                     bombes.append((position_alien[0] + 16,position_alien[1]))
@@ -151,7 +151,6 @@ while continuer==1:
         if bombe[1] >= 600:
             del bombe #la bombe est supprimée si son ordonnée est supérieure au bas de la fenêtre
         if rectangle_bombe.colliderect(rectangle_vaisseau):
-            del bombe
             if vies_vaisseau > 0:
                 vies_vaisseau -= 1
             else:
